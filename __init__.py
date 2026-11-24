@@ -48,6 +48,14 @@ def _bootstrap():
 
     import folder_paths
     from aiohttp import web
+    from cloudflare_access import install_access
+
+    if not install_access(server.PromptServer.instance.app):
+        print("[Mobile Frontend] Cloudflare Access configuration is missing or invalid.")
+        return
+    os.environ["COMFYUI_MOBILE_TELEMETRY"] = "0"
+    os.environ["COMFYUI_MOBILE_CIVITAI_METADATA"] = "0"
+    os.environ["COMFYUI_MOBILE_APP_PUSH"] = "0"
 
     import mobile_hidden_items as _mobile_hidden_items
     import mobile_input_aliases as _mobile_input_aliases
@@ -67,7 +75,6 @@ def _bootstrap():
     )
     import mobile_object_info
     import mobile_progress_ws as _mobile_progress_ws
-    import mobile_push as _mobile_push
     import mobile_telemetry as _mobile_telemetry
     import mobile_latent_shape as _mobile_latent_shape
     import mobile_routes_aliases
@@ -205,11 +212,6 @@ def _bootstrap():
 
         # Mount the sub-application at /mobile
         server.PromptServer.instance.app.add_subapp('/mobile', mobile_app)
-
-        # Server-side completion detection (push-notification spike). Runs on the
-        # main app's event loop so it works regardless of any client being connected.
-        server.PromptServer.instance.app.on_startup.append(_mobile_push.on_startup)
-        server.PromptServer.instance.app.on_cleanup.append(_mobile_push.on_cleanup)
 
         server.PromptServer.instance.app.on_startup.append(_mobile_progress_ws.on_startup)
         server.PromptServer.instance.app.on_cleanup.append(_mobile_progress_ws.on_cleanup)

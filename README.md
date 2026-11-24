@@ -15,6 +15,17 @@
   <a href="./LICENSE"><img src="https://img.shields.io/github/license/cosmicbuffalo/comfyui-mobile-frontend" alt="License: MIT"/></a>
 </p>
 
+## Private browser deployment
+
+This fork requires Cloudflare Access on the entire ComfyUI server, including the desktop interface. Bind ComfyUI to `127.0.0.1` and install the Python dependencies from `requirements.txt`.
+
+1. Create a Cloudflare Access self-hosted application covering every path on the CueForge hostname. Select the same Cloudflare identity provider and member policy as `AkaakuHub/blog`. Require the owner's email in the Allow policy and remove any Bypass rule for the hostname.
+2. Set `CF_ACCESS_HOST` to the CueForge hostname, `CF_ACCESS_TEAM_DOMAIN` to the HTTPS Access team URL, `CF_ACCESS_AUD` to the CueForge application's audience tag, and `CF_ACCESS_OWNER_EMAIL` to the permitted email in the ComfyUI process environment.
+3. Route that hostname through Cloudflare Tunnel to `http://127.0.0.1:8188`, keeping the public Host header. Enable [Protect with Access](https://developers.cloudflare.com/tunnel/reference/origin-parameters/#access), redirect HTTP to HTTPS, and bypass Cloudflare caching for the hostname. Remove any direct proxy or port-forwarding route to ComfyUI.
+4. In iPhone Safari, sign in at `https://<hostname>/mobile/` and use **Add to Home Screen**. The home-screen app may require its own Cloudflare sign-in.
+
+HTTPS and WSS terminate at Cloudflare. The Tunnel encrypts traffic from Cloudflare to the local connector. The connector forwards to ComfyUI over loopback. This fork disables application telemetry, CivitAI metadata lookup, and push delivery. It marks HTTP responses as non-cacheable. The browser can retain workflow drafts in its local storage.
+
 ## Overview
 
 This project is a ComfyUI custom node that serves a complete, modern user interface for ComfyUI, designed from the ground up for phones and tablets. Instead of the node graph, it offers a list-based workflow editor, a live queue and generation dashboard, a full-screen media viewer, and a file manager for your inputs and outputs, all in a single responsive application.
@@ -101,26 +112,11 @@ widget docked next to the picture rather than over it.
 
 ## Installation
 
-This project installs as a standard ComfyUI custom node. You can install it directly from [ComfyUI-Manager](https://github.com/ltdrdata/ComfyUI-Manager) by searching for the node name `comfyui-mobile-frontend` (making sure the author is `cosmicbuffalo`), or install it manually:
+Clone this fork into ComfyUI's `custom_nodes` directory and follow [Private browser deployment](#private-browser-deployment) before restarting ComfyUI.
 
-1.  Navigate to your ComfyUI `custom_nodes` directory:
-    ```bash
-    cd /path/to/ComfyUI/custom_nodes/
-    ```
-2.  Clone this repository:
-    ```bash
-    git clone https://github.com/cosmicbuffalo/comfyui-mobile-frontend.git
-    ```
-3.  Restart ComfyUI.
-
-Once installed and ComfyUI is running, the app is available at:
-
+```bash
+git clone https://github.com/AkaakuHub/comfyui-mobile-frontend.git
 ```
-http://<your-comfyui-ip>:8188/mobile
-```
-
-> [!WARNING]
-> ComfyUI binds to `localhost` by default. To reach the app from another device, start ComfyUI with the `--listen` flag so it is [accessible over your LAN](https://github.com/Comfy-Org/ComfyUI/blob/master/comfy/cli_args.py#L38) — which exposes **this interface, including file browsing, downloads, and the custom nodes manager**, to every device on that network. That may be exactly what you want, but if you plan to reach ComfyUI beyond a network you trust, prefer a VPN or an authenticated tunnel over plain `--listen`. See the [privacy notes](./CUEFORGE_PRIVACY.md) for what the server stores and how it is served.
 
 > [!TIP]
 > For noticeably faster loads — especially over weak Wi-Fi, cellular, or a VPN/tunnel — also pass `--enable-compress-response-body` to ComfyUI. The node definitions endpoint (`/object_info`) can grow to several megabytes once you have a number of custom node packs installed; this flag serves it (and other large JSON responses, such as queue history) gzipped, typically around 10x smaller. The mobile frontend takes advantage of this automatically, with no in-app configuration required.
@@ -130,7 +126,7 @@ A full walkthrough of the app — gestures, panels, workflow editing, LoRA Manag
 <a id="server-settings"></a>
 ### Server settings (environment variables)
 
-Nothing needs configuring for a normal install. These settings are for administrators with a specific need. Each one is read from the environment ComfyUI runs under, so set it where ComfyUI is started, then **restart ComfyUI**.
+These upstream settings describe optional features. The private deployment above disables outbound push, CivitAI metadata lookup, and telemetry. Each one is read from the environment ComfyUI runs under, so set it where ComfyUI is started, then **restart ComfyUI**.
 
 | Variable | Default | What it does |
 |---|---|---|

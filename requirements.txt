@@ -1,3 +1,4 @@
 # Web Push (browser notifications when a generation finishes). Pulls in
 # py-vapid + http-ece + cryptography for VAPID signing and payload encryption.
 pywebpush>=2.0
+PyJWT[crypto]>=2.12.1,<3

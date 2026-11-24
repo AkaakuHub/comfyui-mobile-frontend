@@ -58,45 +58,8 @@ def _gate_broken_response():
 
 # --- Web Push (browser notifications on generation completion) ---
 async def api_push_config(request):
-    """Frontend reads this to get the VAPID public key (applicationServerKey)
-    it needs to subscribe, plus whether push is available at all."""
-    try:
-        if not _mobile_web_push.is_available():
-            return web.json_response({"enabled": False, "reason": _mobile_web_push.import_error()})
-        return web.json_response({
-            "enabled": True,
-            "vapidPublicKey": _mobile_web_push.get_public_key(),
-            "subscriptions": _mobile_web_push.subscription_count(_push_owner()),
-        })
-    except Exception as e:
-        return web.json_response({"error": str(e)}, status=500)
+    return web.json_response({"enabled": False})
 
-async def api_push_subscribe(request):
-    try:
-        if not _mobile_web_push.is_available():
-            return web.json_response({"error": "push_unavailable"}, status=503)
-        body = await request.json()
-        # Accept either {subscription: {...}} or the raw PushSubscription JSON.
-        subscription = body.get("subscription") if isinstance(body, dict) else None
-        locale = body.get("locale") if isinstance(body, dict) else None
-        if subscription is None and isinstance(body, dict) and "endpoint" in body:
-            subscription = body
-        owner = _push_owner()
-        if not _mobile_web_push.add_subscription(subscription, locale, owner=owner):
-            host = _mobile_web_push.refused_host(subscription)
-            if host:
-                # The operator is the only one who can fix this, and the log is
-                # where they will look, so name the host and the setting.
-                print(f"[Mobile Push] refused a subscription to {host}: not a known "
-                      f"push service. If this is the browser's real push service, "
-                      f"add {host} to COMFYUI_MOBILE_WEB_PUSH_HOSTS and restart ComfyUI.",
-                      flush=True)
-                return web.json_response(
-                    {"error": "endpoint_not_allowed", "host": host}, status=400)
-            return web.json_response({"error": "invalid_subscription"}, status=400)
-        return web.json_response({"ok": True, "subscriptions": _mobile_web_push.subscription_count(owner)})
-    except Exception as e:
-        return web.json_response({"error": str(e)}, status=500)
 
 async def api_push_unsubscribe(request):
     try:
@@ -121,22 +84,6 @@ async def api_push_unsubscribe_all(request):
             return web.json_response({"ok": True, "removed": 0})
         removed = _mobile_web_push.remove_owned_subscriptions(owner)
         return web.json_response({"ok": True, "removed": removed})
-    except Exception as e:
-        return web.json_response({"error": str(e)}, status=500)
-
-async def api_push_test(request):
-    """Send a test notification to all subscriptions — used by the UI's
-    'send test' button to confirm the whole pipeline works."""
-    try:
-        if not _mobile_web_push.is_available():
-            return web.json_response({"error": "push_unavailable"}, status=503)
-        # Resolve the owner here, on the event loop — the auth ContextVar
-        # does not propagate into the executor thread.
-        owner = _push_owner()
-        loop = asyncio.get_event_loop()
-        result = await loop.run_in_executor(
-            None, functools.partial(_mobile_web_push.send_test, owner=owner))
-        return web.json_response(result)
     except Exception as e:
         return web.json_response({"error": str(e)}, status=500)
 
@@ -351,10 +298,8 @@ def register_routes(mobile_app):
     # Register API routes
     mobile_app.router.add_get('/api/capabilities', api_capabilities)
     mobile_app.router.add_get('/api/push/config', _refuse_when_unscopable(api_push_config))
-    mobile_app.router.add_post('/api/push/subscribe', _refuse_when_unscopable(api_push_subscribe))
     mobile_app.router.add_post('/api/push/unsubscribe', _refuse_when_unscopable(api_push_unsubscribe))
     mobile_app.router.add_post('/api/push/unsubscribe-all', _refuse_when_unscopable(api_push_unsubscribe_all))
-    mobile_app.router.add_post('/api/push/test', _refuse_when_unscopable(api_push_test))
     mobile_app.router.add_get('/api/push/app-targets', _refuse_when_unscopable(api_push_app_targets_get))
     mobile_app.router.add_post('/api/push/app-targets', _refuse_when_unscopable(api_push_app_targets_add))
     mobile_app.router.add_post('/api/push/app-targets/remove', _refuse_when_unscopable(api_push_app_targets_remove))

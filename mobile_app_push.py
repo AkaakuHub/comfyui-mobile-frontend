@@ -85,7 +85,7 @@ def pairing_enabled() -> bool:
 
 
 def is_available():
-    return _REQUESTS_AVAILABLE
+    return _REQUESTS_AVAILABLE and pairing_enabled()
 
 
 def _push_dir():
@@ -683,7 +683,7 @@ def _warn_unowned_once(skipped: int) -> None:
 
 
 def _send(payload, path="/event", owner=None) -> dict:
-    if not _REQUESTS_AVAILABLE:
+    if not is_available():
         return {"sent": 0, "pruned": 0, "total": 0}
     with _lock:
         stored = list(_load_targets())
