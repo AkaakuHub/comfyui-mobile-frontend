@@ -48,10 +48,10 @@ def _bootstrap():
 
     import folder_paths
     from aiohttp import web
-    from cloudflare_access import install_access
+    from tailscale_access import install_access
 
     if not install_access(server.PromptServer.instance.app):
-        print("[Mobile Frontend] Cloudflare Access configuration is missing or invalid.")
+        print("[Mobile Frontend] Tailscale Access configuration is missing or invalid.")
         return
     os.environ["COMFYUI_MOBILE_TELEMETRY"] = "0"
     os.environ["COMFYUI_MOBILE_CIVITAI_METADATA"] = "0"

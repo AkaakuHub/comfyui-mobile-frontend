@@ -17,14 +17,13 @@
 
 ## Private browser deployment
 
-This fork requires Cloudflare Access on the entire ComfyUI server, including the desktop interface. Bind ComfyUI to `127.0.0.1` and install the Python dependencies from `requirements.txt`.
+This fork authorizes the owner of the connecting Tailscale device for every ComfyUI route, including WebSocket upgrades. Bind ComfyUI to `127.0.0.1` so only trusted processes on the same machine can reach the origin directly.
 
-1. Create a Cloudflare Access self-hosted application covering every path on the CueForge hostname. Select the same Cloudflare identity provider and member policy as `AkaakuHub/blog`. Require the owner's email in the Allow policy and remove any Bypass rule for the hostname.
-2. Set `CF_ACCESS_HOST` to the CueForge hostname, `CF_ACCESS_TEAM_DOMAIN` to the HTTPS Access team URL, `CF_ACCESS_AUD` to the CueForge application's audience tag, and `CF_ACCESS_OWNER_EMAIL` to the permitted email in the ComfyUI process environment.
-3. Route that hostname through Cloudflare Tunnel to `http://127.0.0.1:8188`, keeping the public Host header. Enable [Protect with Access](https://developers.cloudflare.com/tunnel/reference/origin-parameters/#access), redirect HTTP to HTTPS, and bypass Cloudflare caching for the hostname. Remove any direct proxy or port-forwarding route to ComfyUI.
-4. In iPhone Safari, sign in at `https://<hostname>/mobile/` and use **Add to Home Screen**. The home-screen app may require its own Cloudflare sign-in.
+1. Set `CUEFORGE_TAILSCALE_HOST` to the Serve hostname including port `8443` and `CUEFORGE_TAILSCALE_OWNER` to the owner's Tailscale login in the ComfyUI process environment.
+2. Run `tailscale serve --bg --https=8443 http://127.0.0.1:8188` on the ComfyUI machine. Keep the origin on loopback and keep Funnel off for this port.
+3. On iPhone, connect Tailscale as the configured owner, open `https://<hostname>:8443/mobile/` in Safari, and select **Add to Home Screen**.
 
-HTTPS and WSS terminate at Cloudflare. The Tunnel encrypts traffic from Cloudflare to the local connector. The connector forwards to ComfyUI over loopback. This fork disables application telemetry, CivitAI metadata lookup, and push delivery. It marks HTTP responses as non-cacheable. The browser can retain workflow drafts in its local storage.
+This fork disables telemetry, CivitAI metadata lookup, push delivery, and HTTP caching. The browser can retain workflow drafts on the device.
 
 ## Overview
 
