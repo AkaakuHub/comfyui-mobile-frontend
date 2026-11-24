@@ -17,11 +17,17 @@
 
 ## Private browser deployment
 
-This fork authorizes the owner of the connecting Tailscale device for every ComfyUI route, including WebSocket upgrades. Bind ComfyUI to `127.0.0.1` so only trusted processes on the same machine can reach the origin directly.
+Tailscale authentication is required for every ComfyUI route, including the desktop interface, mobile app, API, and WebSocket upgrades. CueForge accepts the configured owner's identity from Tailscale Serve. It denies access if the configuration or identity is missing, or if the identity belongs to another account.
 
-1. Set `CUEFORGE_TAILSCALE_HOST` to the Serve hostname including port `8443` and `CUEFORGE_TAILSCALE_OWNER` to the owner's Tailscale login in the ComfyUI process environment.
-2. Run `tailscale serve --bg --https=8443 http://127.0.0.1:8188` on the ComfyUI machine. Keep the origin on loopback and keep Funnel off for this port.
-3. On iPhone, connect Tailscale as the configured owner, open `https://<hostname>:8443/mobile/` in Safari, and select **Add to Home Screen**.
+Set the Serve hostname, including port `8443`, and your Tailscale login in the ComfyUI process environment. This Windows Command Prompt example uses placeholder values. Keep your actual values in your local launcher.
+
+```bat
+set "CUEFORGE_TAILSCALE_HOST=workstation.example-tailnet.ts.net:8443"
+set "CUEFORGE_TAILSCALE_OWNER=owner@example.com"
+python main.py --listen 127.0.0.1 --port 8188
+```
+
+Run `tailscale serve --bg --https=8443 http://127.0.0.1:8188` on the ComfyUI machine. Keep the origin bound to loopback and Tailscale Funnel off for this port. Connect to Tailscale as the configured owner and open `https://<hostname>:8443/mobile/` in your browser. The same authentication applies when opening the installed web app.
 
 This fork disables telemetry, CivitAI metadata lookup, push delivery, and HTTP caching. The browser can retain workflow drafts on the device.
 
