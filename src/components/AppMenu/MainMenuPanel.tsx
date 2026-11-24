@@ -6,6 +6,7 @@ import { MenuLoadSection } from './MenuLoadSection';
 import { MenuSaveSection } from './MenuSaveSection';
 import { MenuAboutSection } from './MenuAboutSection';
 import { MenuLanguageSection } from './MenuLanguageSection';
+import { MenuInstallApp } from './MenuInstallApp';
 
 interface MenuSectionsOpen {
   load: boolean;
@@ -76,6 +77,8 @@ export function MainMenuPanel({
   return (
     <div className="pb-8">
       <MenuErrorNotice error={error} onDismiss={onDismissError} />
+
+      <MenuInstallApp />
 
       <MenuServerSection
         open={menuSectionsOpen.server}

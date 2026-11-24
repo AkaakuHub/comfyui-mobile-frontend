@@ -8,6 +8,9 @@
  * been checked by a fluent speaker. See the note in src/i18n/index.ts.
  */
 export const ja: Record<string, string> = {
+  'Install CueForge': 'CueForgeをインストール',
+  'Open the browser’s Share menu and choose Add to Home Screen. If Open as Web App is shown, turn it on.': 'ブラウザの共有メニューから「ホーム画面に追加」を選びます。「Webアプリとして開く」が表示されたらオンにします。',
+  'Open the browser menu and choose Install app, Add to Home Screen, or Add to Dock if available.': 'ブラウザのメニューから「アプリをインストール」「ホーム画面に追加」「Dockに追加」のうち、表示されている項目を選びます。',
   // トップバー
   'Apply to the whole image, not just the tapped area': 'タップした領域だけでなく画像全体に適用',
   'Black': '黒',

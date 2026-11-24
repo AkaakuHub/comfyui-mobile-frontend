@@ -8,6 +8,9 @@
  * been checked by a fluent speaker. See the note in src/i18n/index.ts.
  */
 export const zhTW: Record<string, string> = {
+  'Install CueForge': '安裝 CueForge',
+  'Open the browser’s Share menu and choose Add to Home Screen. If Open as Web App is shown, turn it on.': '開啟瀏覽器的分享選單，選擇加入主畫面。如果顯示以網頁 App 開啟，請開啟該選項。',
+  'Open the browser menu and choose Install app, Add to Home Screen, or Add to Dock if available.': '開啟瀏覽器選單，選擇可用的安裝應用程式、加入主畫面或加入 Dock。',
   // 頂部欄
   'Apply to the whole image, not just the tapped area': '套用至整張圖片，而不只是點按的區域',
   'Black': '黑色',

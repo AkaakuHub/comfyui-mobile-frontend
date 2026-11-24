@@ -8,6 +8,9 @@
  * been checked by a fluent speaker. See the note in src/i18n/index.ts.
  */
 export const ko: Record<string, string> = {
+  'Install CueForge': 'CueForge 설치',
+  'Open the browser’s Share menu and choose Add to Home Screen. If Open as Web App is shown, turn it on.': '브라우저의 공유 메뉴에서 홈 화면에 추가를 선택하세요. 웹 앱으로 열기가 표시되면 켜세요.',
+  'Open the browser menu and choose Install app, Add to Home Screen, or Add to Dock if available.': '브라우저 메뉴에 앱 설치, 홈 화면에 추가 또는 Dock에 추가가 표시되면 선택하세요.',
   // 상단 바
   'Apply to the whole image, not just the tapped area': '탭한 영역뿐 아니라 이미지 전체에 적용',
   'Black': '검정',
