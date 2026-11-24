@@ -560,6 +560,8 @@ export function MediaViewer({
           } else {
             showDownloadToast(t("Couldn't save to Photos."), 'error', 3000);
           }
+        } else if (outcome.route === 'share') {
+          setDownloadToast(null);
         } else if (outcome.started) {
           showDownloadToast(t('Download started.'), 'success', 2000);
         } else {

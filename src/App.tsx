@@ -5,6 +5,7 @@ import { WorkflowPanel } from './components/WorkflowPanel';
 import { BottomBar } from './components/BottomBar';
 import { ConnectionLostOverlay } from './components/BackendStatusOverlay';
 import { ShareHandoffController } from './components/ShareHandoffController';
+import { PwaFileSaveDialog } from './components/modals/PwaFileSaveDialog';
 import { NoWorkflowImageDialog } from './components/modals/NoWorkflowImageDialog';
 import { MissingNodesDialog } from './components/modals/MissingNodesDialog';
 import { useWebSocket } from './hooks/useWebSocket';
@@ -462,6 +463,7 @@ function App() {
       <NoWorkflowImageDialog />
       <MissingNodesDialog />
       <ShareHandoffController />
+      <PwaFileSaveDialog />
     </div>
   );
 }
