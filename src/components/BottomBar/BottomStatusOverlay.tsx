@@ -298,7 +298,8 @@ export function BottomStatusOverlay() {
   return createPortal(
     <div
       id="bottom-status-overlay"
-      className="fixed inset-x-0 bottom-20 z-[950] flex flex-col items-center gap-3 pointer-events-none"
+      className="fixed inset-x-0 z-[950] flex flex-col items-center gap-3 pointer-events-none"
+      style={{ bottom: 'calc(var(--bottom-bar-offset, 72px) + 8px)' }}
     >
       {shouldShowError && (
         <div
